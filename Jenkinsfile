@@ -21,7 +21,8 @@ pipeline {
           steps {
             sh '''
               set -eux
-
+              echo "PATH=$PATH"
+              which docker || true
               docker compose down -v --remove-orphans || true
               docker compose up -d --build
               docker compose ps
