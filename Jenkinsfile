@@ -13,13 +13,10 @@ pipeline {
         sh '''
           set -eux
 
-          # Clean up any leftovers from previous runs (safe)
+          echo "PATH=$PATH"
+          which docker || true
           docker compose down -v --remove-orphans || true
-
-          # Build images + start containers
           docker compose up -d --build
-
-          # Show what's running
           docker compose ps
         '''
       }
@@ -30,7 +27,6 @@ pipeline {
     always {
       sh '''
         set +e
-        echo "=== Cleaning up containers/networks/volumes ==="
         docker compose down -v --remove-orphans
       '''
     }
