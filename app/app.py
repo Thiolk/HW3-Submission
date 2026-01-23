@@ -1,10 +1,12 @@
-#Code adapted from my submission for Autumn 2025 Intro to Python Homework 6
+# Code adapted from my submission for Autumn 2025 Intro to Python Homework 6
 
 import os
+
 import mysql.connector
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, redirect, render_template, request, url_for
 
 app = Flask(__name__)
+
 
 def get_db():
     return mysql.connector.connect(
@@ -14,6 +16,7 @@ def get_db():
         password=os.environ["DB_PASSWORD"],
         database=os.environ["DB_NAME"],
     )
+
 
 @app.get("/health")
 def health():
@@ -27,6 +30,7 @@ def health():
         return {"status": "ok"}, 200
     except Exception as e:
         return {"status": "error", "detail": str(e)}, 500
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -78,6 +82,7 @@ def delete(id):
     cur.close()
     conn.close()
     return redirect(url_for("index"))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

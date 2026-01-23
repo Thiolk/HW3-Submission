@@ -75,6 +75,15 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
+    
+    services:
+      lint:
+        build: .
+        working_dir: /app
+        volumes:
+          - ./app:/app
+        command: >
+          sh -lc "ruff check . && black --check ."
 
 networks:
   frontend:
