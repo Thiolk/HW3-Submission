@@ -8,6 +8,16 @@ pipeline {
       }
     }
 
+    stage('Prepare Environment') {
+    steps {
+        sh '''
+        set -eux
+        cp .env.example .env
+        '''
+    }
+    }
+
+
     stage('Build & Start Services') {
       steps {
         sh '''
