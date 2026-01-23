@@ -35,6 +35,7 @@ pipeline {
     always {
       sh '''
         set +e
+        export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
         docker compose down -v --remove-orphans
       '''
     }
