@@ -102,7 +102,8 @@ services:
       sh -lc "pytest -q
       --cov=/app
       --cov-report=term-missing
-      --cov-report=html:/coverage_reports/html"
+      --cov-report=html:/coverage_reports/html
+      --cov-fail-under=80"
 
 networks:
   frontend:

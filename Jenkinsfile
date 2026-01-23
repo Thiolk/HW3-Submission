@@ -20,16 +20,16 @@ pipeline {
     stage('Quality Gate: Lint + Format') {
         steps {
             script {
-            def status = sh(
-                script: '''
-                set -eu
-                export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
-                docker compose run --rm lint
-                ''',
-                returnStatus: true
-            )
+                def status = sh(
+                    script: '''
+                    set -eu
+                    export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+                    docker compose run --rm lint
+                    ''',
+                    returnStatus: true
+                )
 
-            if (status != 0) {
+                if (status != 0) {
                     error("""Quality Gate FAILED: Lint / Format checks did not pass.
                     To fix, run {ruff check .} and {black .} locally and rerun the checks
                     using {ruff check .} and {black --check .}. Commit the changes and push again.""")
