@@ -21,3 +21,5 @@ app/logs/
 .coverage
 htmlcov/
 coverage_reports/
+
+Submission\ Files/
