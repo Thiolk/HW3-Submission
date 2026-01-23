@@ -1,7 +1,8 @@
 import os
-import pytest
+
 import mysql.connector
-from app import app
+import pytest
+
 
 def db_connect():
     return mysql.connector.connect(
@@ -25,6 +26,8 @@ def clean_db():
 
 @pytest.fixture
 def client():
+    from app import app
+
     app.config["TESTING"] = True
     with app.test_client() as c:
         yield c

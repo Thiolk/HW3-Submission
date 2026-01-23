@@ -1,4 +1,4 @@
-from .test_config import insert_task, get_task, count_tasks
+from test_config import count_tasks, get_task, insert_task
 
 
 def test_tasks_are_displayed(client):
