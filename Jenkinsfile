@@ -76,6 +76,8 @@ pipeline {
 
   post {
     always {
+      archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
+
       sh '''
         set +e
         export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
