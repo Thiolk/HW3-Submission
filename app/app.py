@@ -35,8 +35,7 @@ def health():
 @app.route("/", methods=["GET", "POST"])
 def index():
     conn = get_db()
-    cur = conn.cursor(dictionary=True)  # keeps task["id"] style working in template
-
+    cur = conn.cursor(dictionary=True)
     if request.method == "POST":
         description = request.form["description"]
         if description:

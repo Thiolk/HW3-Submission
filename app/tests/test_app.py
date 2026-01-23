@@ -1,4 +1,4 @@
-from test_config import count_tasks, get_task, insert_task
+from conftest import count_tasks, get_task, insert_task
 
 
 def test_tasks_are_displayed(client):

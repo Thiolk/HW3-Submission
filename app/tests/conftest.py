@@ -26,10 +26,10 @@ def clean_db():
 
 @pytest.fixture
 def client():
-    from app import app
+    from app.app import app as flask_app
 
-    app.config["TESTING"] = True
-    with app.test_client() as c:
+    flask_app.config["TESTING"] = True
+    with flask_app.test_client() as c:
         yield c
 
 
