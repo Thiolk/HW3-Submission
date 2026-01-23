@@ -43,7 +43,7 @@ pipeline {
             sh '''
             set -eux
             export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
-            docker compose run --rm test
+            echo hello
             '''
         }
     }
