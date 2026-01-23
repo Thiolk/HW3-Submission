@@ -5,3 +5,4 @@ mysql-connector-python==9.4.0
 pytest==8.3.4
 ruff
 black
+pytest-cov
