@@ -1,4 +1,3 @@
-# Python
 __pycache__/
 *.py[cod]
 *.pyo
@@ -10,17 +9,15 @@ venv/
 .env.*
 !.env.example
 
-# IDE / OS
 .vscode/
 .idea/
 .DS_Store
 
-# Logs
 *.log
 logs/
 app/logs/
 
-# Testing / coverage
 .pytest_cache/
 .coverage
 htmlcov/
+coverage_reports/

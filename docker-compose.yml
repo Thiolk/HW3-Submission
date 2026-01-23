@@ -84,6 +84,24 @@ services:
     command: >
       sh -lc "ruff check . && black --check ."
 
+  test:
+    build: ./app
+    container_name: todo-test
+    working_dir: /app
+    env_file:
+      - ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./app:/app
+      - ./coverage_reports:/coverage_reports
+    command: >
+      sh -lc "pytest -q
+      --cov=/app
+      --cov-report=term-missing
+      --cov-report=html:/coverage_reports/html"
+
 networks:
   frontend:
     driver: bridge

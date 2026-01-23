@@ -38,6 +38,15 @@ pipeline {
         }
     }
 
+    stage('Tests + Coverage (HTML)') {
+        steps {
+            sh '''
+            set -eux
+            export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+            docker compose run --rm test
+            '''
+        }
+    }
 
     stage('Build & Start Services') {
       steps {
@@ -62,7 +71,6 @@ pipeline {
             '''
         }
     }
-
     
   }
 
