@@ -51,6 +51,18 @@ pipeline {
       }
     }
 
+    stage('Run Tests') {
+        steps {
+            sh '''
+            set -eux
+            export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
+
+            # Run pytest inside the web container (no TTY in Jenkins)
+            docker compose exec -T web pytest -q
+            '''
+        }
+    }
+
     
   }
 
