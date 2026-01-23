@@ -37,15 +37,6 @@ pipeline {
             }
         }
 
-        stage('Tests + Coverage (HTML)') {
-            steps {
-                sh '''
-                set -eux
-                docker compose run --rm test
-                '''
-            }
-        }
-
         stage('Build & Start Services') {
             steps {
                 sh '''
@@ -57,11 +48,11 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Tests + Coverage (HTML)') {
             steps {
                 sh '''
                 set -eux
-                docker compose exec -T web pytest -q
+                docker compose run --rm test
                 '''
             }
         }
