@@ -1,3 +1,7 @@
+environment {
+  PATH = "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+}
+
 pipeline {
     agent any
 
