@@ -9,6 +9,8 @@ def test_tasks_are_displayed(client):
     assert resp.status_code == 200
 
     html = resp.data.decode("utf-8")
+    # force fail
+    assert "THIS SHOULD FAIL" in html
     assert "Task A" in html
     assert "Task B" in html
 

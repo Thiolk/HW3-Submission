@@ -29,10 +29,6 @@ def health():
         conn.close()
         return {"status": "ok"}, 200
     except Exception as e:
-        # To test code coverage failure
-        print("hello")
-        print("hello")
-        print("hello")
         return {"status": "error", "detail": str(e)}, 500
 
 
