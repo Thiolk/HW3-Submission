@@ -50,6 +50,7 @@ pipeline {
         }
 
         stage('Build & Start Services') {
+            when { branch 'main' } 
             agent { label 'docker' }
             steps {
                 sh '''
@@ -62,6 +63,7 @@ pipeline {
         }
 
         stage('Tests + Coverage (HTML)') {
+            when { branch 'main' }
             agent { label 'docker' }
             steps {
                 sh '''
@@ -70,12 +72,27 @@ pipeline {
                 '''
             }
         }
+        stage('Build and Package Artifact') {
+            agent { label 'docker' }
+            steps {
+                def VERSION = "0.1.${env.BUILD_NUMBER}"
+                def IMAGE = "todo-app:${VERSION}"
+
+                sh """
+                set -eux
+                mkdir -p artifacts
+                docker build -t ${IMAGE} ./app
+                docker save ${IMAGE} | gzip > artifacts/todo-app_${VERSION}.tar.gz
+                """
+            }
+        }
     }
 
     post {
         always {
             node('docker') {
                 archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: false
 
                 sh '''
                 set +e
