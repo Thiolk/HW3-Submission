@@ -3,16 +3,18 @@ environment {
 }
 
 pipeline {
-    agent any
+    agent none
 
     stages {
         stage('Checkout') {
+            agent any
             steps {
                 checkout scm
             }
         }
 
         stage('Prepare Environment') {
+            agent any
             steps {
                 sh '''
                 set -eux
@@ -22,6 +24,7 @@ pipeline {
         }
 
         stage('Quality Gate: Lint + Format') {
+            agent { label 'docker' }
             steps {
                 script {
                     def status = sh(
@@ -42,6 +45,7 @@ pipeline {
         }
 
         stage('Build & Start Services') {
+            agent { label 'docker' }
             steps {
                 sh '''
                     set -eux
@@ -53,10 +57,11 @@ pipeline {
         }
 
         stage('Tests + Coverage (HTML)') {
+            agent { label 'docker' }
             steps {
                 sh '''
                 set -eux
-                docker compose run --rm test > test.log > 2>&1
+                docker compose run --rm test
                 '''
             }
         }
@@ -66,10 +71,12 @@ pipeline {
         always {
             archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
 
-            sh '''
-            set +e
-            docker compose down -v --remove-orphans
-            '''
+            node('docker') {
+                sh '''
+                set +e
+                docker compose down -v --remove-orphans
+                '''
+            }
         }
 
         success {
@@ -81,7 +88,7 @@ pipeline {
 
         failure {
             script {
-                def logTail = sh(script: "tail -n 80 test.log || true", returnStdout: true).trim()
+                def logTail = sh(script: '''curl -s "${BUILD_URL}consoleText" | tail -n 80''')
                 def msg = """Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}
                 console output last 80 lines:
                 ```$logTail```"""
