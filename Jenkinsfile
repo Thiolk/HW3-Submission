@@ -18,11 +18,12 @@ pipeline {
             steps {
                 sh '''
                 set -eux
-                cp .env.example .env
+                cp .env.example .env'''
+                
                 stash name: 'workspace',
                     includes: '**/*',
                     excludes: '.git/**, db_data/**, coverage_reports/**, **/__pycache__/**, **/*.pyc, .venv/**'
-                '''
+                
             }
         }
 
