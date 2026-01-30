@@ -7,14 +7,14 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            agent any
+            agent { label 'docker' }
             steps {
                 checkout scm
             }
         }
 
         stage('Prepare Environment') {
-            agent any
+            agent { label 'docker' }
             steps {
                 sh '''
                 set -eux
@@ -88,7 +88,7 @@ pipeline {
 
         failure {
             script {
-                def logTail = sh(script: '''curl -s "${BUILD_URL}consoleText" | tail -n 80''')
+                def logTail = sh(script: '''curl -s "${BUILD_URL}/consoleText" | tail -n 80''')
                 def msg = """Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}
                 console output last 80 lines:
                 ```$logTail```"""
