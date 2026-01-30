@@ -74,7 +74,7 @@ pipeline {
         }
         stage('Build and Package Artifact') {
             agent { label 'docker' }
-            steps {
+            script {
                 def VERSION = "0.1.${env.BUILD_NUMBER}"
                 def IMAGE = "todo-app:${VERSION}"
 
