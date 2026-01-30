@@ -72,18 +72,21 @@ pipeline {
                 '''
             }
         }
+
         stage('Build and Package Artifact') {
             agent { label 'docker' }
-            script {
-                def VERSION = "0.1.${env.BUILD_NUMBER}"
-                def IMAGE = "todo-app:${VERSION}"
+            steps {
+                script {
+                    def VERSION = "0.1.${env.BUILD_NUMBER}"
+                    def IMAGE = "todo-app:${VERSION}"
 
-                sh """
-                set -eux
-                mkdir -p artifacts
-                docker build -t ${IMAGE} ./app
-                docker save ${IMAGE} | gzip > artifacts/todo-app_${VERSION}.tar.gz
-                """
+                    sh """
+                    set -eux
+                    mkdir -p artifacts
+                    docker build -t ${IMAGE} ./app
+                    docker save ${IMAGE} | gzip > artifacts/todo-app_${VERSION}.tar.gz
+                    """
+                }
             }
         }
     }
