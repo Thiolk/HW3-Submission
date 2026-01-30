@@ -98,7 +98,7 @@ services:
       --cov=/app
       --cov-report=term-missing
       --cov-report=html:/coverage_reports/html
-      --cov-fail-under=80"
+      --cov-fail-under=99"
 
 networks:
   frontend:
