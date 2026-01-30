@@ -71,5 +71,19 @@ pipeline {
             docker compose down -v --remove-orphans
             '''
         }
+
+        success {
+            slackSend(
+                channel: "#pipeline-updates"
+                message: "Successfully built ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+            )
+        }
+
+        failure {
+            slackSend(
+                channel: "#pipeline-updates"
+                message: "Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+            )
+        }
     }
 }
