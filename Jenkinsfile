@@ -7,18 +7,21 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            agent { label 'docker' }
+            agent any
             steps {
                 checkout scm
             }
         }
 
         stage('Prepare Environment') {
-            agent { label 'docker' }
+            agent any
             steps {
                 sh '''
                 set -eux
                 cp .env.example .env
+                stash name: 'workspace',
+                    includes: '**/*',
+                    excludes: '.git/**, db_data/**, coverage_reports/**, **/__pycache__/**, **/*.pyc, .venv/**'
                 '''
             }
         }
@@ -26,6 +29,7 @@ pipeline {
         stage('Quality Gate: Lint + Format') {
             agent { label 'docker' }
             steps {
+                unstash 'workspace'
                 script {
                     def status = sh(
                         script: '''
@@ -69,9 +73,9 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
-
             node('docker') {
+                archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
+
                 sh '''
                 set +e
                 docker compose down -v --remove-orphans
@@ -87,17 +91,23 @@ pipeline {
         }
 
         failure {
-            script {
-                def logTail = sh(script: '''curl -s "${BUILD_URL}/consoleText" | tail -n 80''')
-                def msg = """Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}
-                console output last 80 lines:
-                ```$logTail```"""
-                slackSend(
-                    channel: "#pipeline-updates",
-                    message: msg
-                )
+            node('built-in') {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'jenkins-api', usernameVariable: 'J_USER', passwordVariable: 'J_TOKEN')]) {
+                        def logTail = sh(
+                            script: '''
+                            set -eu
+                            curl -s -u "$J_USER:$J_TOKEN" "${BUILD_URL}consoleText" | tail -n 80''')
+                        def msg = """Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                        console output last 80 lines:
+                        ```$logTail```"""
+                        slackSend(
+                            channel: "#pipeline-updates",
+                            message: msg
+                        )
+                    }
+                }
             }
-            
         }
     }
 }
