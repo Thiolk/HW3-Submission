@@ -56,7 +56,7 @@ pipeline {
             steps {
                 sh '''
                 set -eux
-                docker compose run --rm test
+                docker compose run --rm test > test.log > 2>&1
                 '''
             }
         }
@@ -81,7 +81,7 @@ pipeline {
 
         failure {
             script {
-                def logTail = currentBuild.rawBuild.getLog(80).join("\n")
+                def logTail = sh(script: "tail -n 80 test.log || true", returnStdout: true).trim()
                 def msg = """Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}
                 console output last 80 lines:
                 ```$logTail```"""
