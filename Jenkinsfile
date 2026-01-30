@@ -74,16 +74,23 @@ pipeline {
 
         success {
             slackSend(
-                channel: "#pipeline-updates"
+                channel: "#pipeline-updates",
                 message: "Successfully built ${env.JOB_NAME} #${env.BUILD_NUMBER}"
             )
         }
 
         failure {
-            slackSend(
-                channel: "#pipeline-updates"
-                message: "Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-            )
+            script {
+                def logTail = currentBuild.rawBuild.getLog(80).join("\n")
+                def msg = """Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}
+                console output last 80 lines:
+                ```$logTail```"""
+                slackSend(
+                    channel: "#pipeline-updates",
+                    message: msg
+                )
+            }
+            
         }
     }
 }
