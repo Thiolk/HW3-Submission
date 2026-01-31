@@ -50,9 +50,9 @@ pipeline {
         }
 
         stage('Build & Start Services') {
-            when { branch 'main' } 
             agent { label 'docker' }
             steps {
+                unstash 'workspace'
                 sh '''
                     set -eux
                     docker compose down -v --remove-orphans || true
@@ -63,9 +63,9 @@ pipeline {
         }
 
         stage('Tests + Coverage (HTML)') {
-            when { branch 'main' }
             agent { label 'docker' }
             steps {
+                unstash 'workspace'
                 sh '''
                 set -eux
                 docker compose run --rm test
@@ -76,6 +76,7 @@ pipeline {
         stage('Build and Package Artifact') {
             agent { label 'docker' }
             steps {
+                unstash 'workspace'
                 script {
                     def VERSION = "0.1.${env.BUILD_NUMBER}"
                     def IMAGE = "todo-app:${VERSION}"
@@ -98,6 +99,7 @@ pipeline {
         }
 
         stage('Staging DB Up (seeded)') {
+            when { branch 'main' }
             agent { label 'docker' }
             steps {
                 unstash 'staging'
@@ -106,7 +108,7 @@ pipeline {
                     docker compose --env-file .env.staging --profile staging up -d staging-db
                     docker compose --env-file .env.staging --profile staging ps
                     docker compose --env-file .env.staging --profile staging exec -T staging-db sh -lc \
-                    'mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "${MYSQL_DATABASE}_staging" -e "SELECT * FROM task;"'
+                    'mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "${MYSQL_DATABASE}" -e "SELECT * FROM task;"'
                 '''
             }
         }
@@ -116,7 +118,7 @@ pipeline {
         always {
             node('docker') {
                 archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
-                archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: false
+                archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: true
 
                 sh '''
                 set +e
@@ -140,7 +142,7 @@ pipeline {
                         def logTail = sh(
                             script: '''
                             set -eu
-                            curl -fsS -u "$J_USER:$J_TOKEN" "http://127.0.0.1:8080/consoleText" | tail -n 80''', returnStdout: true).trim()
+                            curl -fsS -u "$J_USER:$J_TOKEN" "https://127.0.0.1:8080/consoleText" | tail -n 80''', returnStdout: true).trim()
                         def msg = """Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}
                         console output last 80 lines:
                         ```$logTail```"""
