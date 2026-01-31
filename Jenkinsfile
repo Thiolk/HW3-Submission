@@ -108,7 +108,7 @@ pipeline {
                     docker compose --env-file .env.staging --profile staging up -d staging-db
                     docker compose --env-file .env.staging --profile staging ps
                     docker compose --env-file .env.staging --profile staging exec -T staging-db sh -lc \
-                    'mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "${MYSQL_DATABASE}" -e "SELECT * FROM task;"'
+                    mysql -h 127.0.0.1 -P 3306 -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "${MYSQL_DATABASE}" -e "SELECT * FROM task;"
                 '''
             }
         }
@@ -136,23 +136,10 @@ pipeline {
         }
 
         failure {
-            node('built-in') {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'jenkins-api', usernameVariable: 'J_USER', passwordVariable: 'J_TOKEN')]) {
-                        def logTail = sh(
-                            script: '''
-                            set -eu
-                            curl -fsS -u "$J_USER:$J_TOKEN" "https://127.0.0.1:8080/consoleText" | tail -n 80''', returnStdout: true).trim()
-                        def msg = """Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}
-                        console output last 80 lines:
-                        ```$logTail```"""
-                        slackSend(
-                            channel: "#pipeline-updates",
-                            message: msg
-                        )
-                    }
-                }
-            }
+            slackSend(
+                channel: "#pipeline-updates",
+                message: "failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+            )
         }
     }
 }
