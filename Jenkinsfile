@@ -105,6 +105,9 @@ pipeline {
                     set -eux
                     docker compose --env-file .env.staging --profile staging up -d staging-db
                     docker compose --env-file .env.staging --profile staging ps
+                    docker compose --env-file .env.staging --profile staging exec -T staging-db \
+                    mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "${MYSQL_DATABASE}_staging" \
+                    -e "SHOW TABLES; SELECT * FROM staging-task;"
                 '''
             }
         }
@@ -138,7 +141,7 @@ pipeline {
                         def logTail = sh(
                             script: '''
                             set -eu
-                            curl -fsS -u "$J_USER:$J_TOKEN" "$127.0.0.1:8080/consoleText" | tail -n 80''', returnStdout: true).trim()
+                            curl -fsS -u "$J_USER:$J_TOKEN" "127.0.0.1:8080/consoleText" | tail -n 80''', returnStdout: true).trim()
                         def msg = """Failed to build ${env.JOB_NAME} #${env.BUILD_NUMBER}
                         console output last 80 lines:
                         ```$logTail```"""
