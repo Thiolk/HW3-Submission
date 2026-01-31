@@ -118,6 +118,17 @@ pipeline {
                 '''
             }
         }
+
+        stage('E2E Tests (Playwright)') {
+        agent { label 'docker' }
+        steps {
+            unstash 'staging'
+            sh '''
+                set -eux
+                docker compose run --rm e2e
+            '''
+            }
+        }
     }
 
     post {
@@ -125,6 +136,8 @@ pipeline {
             node('docker') {
                 archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'e2e/playwright-report/**', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'e2e/test-results/**', allowEmptyArchive: true
 
                 sh '''
                 set +e

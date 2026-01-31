@@ -1,0 +1,24 @@
+{
+  "name": "hw3-submission",
+  "version": "1.0.0",
+  "description": "Prequisites Git Docker Desktop Jenkins (running locally) ngrok",
+  "main": "index.js",
+  "scripts": {
+    "test:ci": "playwright test --reporter=html"},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thiolk/HW3-Submission.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Thiolk/HW3-Submission/issues"
+  },
+  "homepage": "https://github.com/Thiolk/HW3-Submission#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.1",
+    "@types/node": "^25.1.0",
+    "mysql2": "^3.11.3"
+  }
+}

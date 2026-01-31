@@ -25,3 +25,11 @@ coverage_reports/
 
 HW3\ Submission\ Files/
 HW4\ Submission\ Files/
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

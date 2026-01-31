@@ -126,6 +126,28 @@ services:
       --cov-report=html:/coverage_reports/html
       --cov-fail-under=80"
 
+  e2e:
+    image: mcr.microsoft.com/playwright:v1.49.0-jammy
+    working_dir: /e2e
+    depends_on:
+      web:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    environment:
+      CI: "true"
+      BASE_URL: "http://web:5000"
+    env_file:
+      - ./.env.staging
+    volumes:
+      - ./e2e:/e2e
+    networks:
+      - frontend
+      - backend
+    command: >
+      sh -lc "npm install --no-fund --no-audit
+      && npm run test:ci"
+
 networks:
   frontend:
     driver: bridge
