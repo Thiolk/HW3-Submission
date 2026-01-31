@@ -105,6 +105,7 @@ pipeline {
                 unstash 'staging'
                 sh '''
                     set -eux
+                    docker compose --env-file .env.staging --profile staging down -v || true
                     docker compose --env-file .env.staging --profile staging up -d staging-db
                     docker compose --env-file .env.staging --profile staging ps
                     sleep 15
