@@ -89,6 +89,25 @@ pipeline {
                 }
             }
         }
+        stage('Prepare Staging Env') {
+            agent any
+            steps {
+                sh 'cp .env.staging.example .env.staging'
+                stash name: 'staging', includes: '**/*', excludes: '.git/**, **/__pycache__/**, **/*.pyc, .venv/**'
+            }
+        }
+
+        stage('Staging DB Up (seeded)') {
+            agent { label 'docker' }
+            steps {
+                unstash 'staging'
+                sh '''
+                    set -eux
+                    docker compose --env-file .env.staging --profile staging up -d staging-db
+                    docker compose --env-file .env.staging --profile staging ps
+                '''
+            }
+        }
     }
 
     post {
@@ -99,6 +118,7 @@ pipeline {
 
                 sh '''
                 set +e
+                docker compose --env-file .env.staging --profile staging down -v --remove-orphans || true
                 docker compose down -v --remove-orphans
                 '''
             }

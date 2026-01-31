@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS staging-task (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  description VARCHAR(255) NOT NULL,
+  completed TINYINT(1) NOT NULL DEFAULT 0
+);›
