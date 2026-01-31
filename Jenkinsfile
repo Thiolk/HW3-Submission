@@ -109,8 +109,12 @@ pipeline {
                     docker compose --env-file .env.staging --profile staging up -d staging-db
                     docker compose --env-file .env.staging --profile staging ps
                     sleep 15
-                    docker compose --env-file .env.staging --profile staging exec -T staging-db sh -lc \
-                    'mysql -h 127.0.0.1 -P 3306 -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "${MYSQL_DATABASE}" -e "SELECT * FROM task;"'
+                    docker compose --env-file .env.staging --profile staging exec -T staging-db sh -lc '
+                    echo "MYSQL_DATABASE=$MYSQL_DATABASE"
+                    mysql -h 127.0.0.1 -P 3306 -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" -e "
+                    SHOW TABLES;
+                    SELECT COUNT(*) AS task_count FROM task;
+                    SELECT * FROM task;"'
                 '''
             }
         }
