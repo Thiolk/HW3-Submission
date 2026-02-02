@@ -81,13 +81,13 @@ pipeline {
                     sh '''
                     set -eu
                     docker run --rm \
-                        --user "$(id -u):$(id -g)" \
                         -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                         -e SONAR_TOKEN="$SONAR_AUTH_TOKEN" \
                         -v "$WORKSPACE:/usr/src" \
                         -w /usr/src \
                         sonarsource/sonar-scanner-cli:latest
-
+                    
+                    pwd
                     ls -la .scannerwork || true
                     ls -la .scannerwork/report-task.txt || true
                     '''
@@ -98,6 +98,7 @@ pipeline {
         stage('Quality Gate') {
             agent { label 'docker' }
             steps {
+                unstash 'workspace'
                 timeout(time: 5, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
