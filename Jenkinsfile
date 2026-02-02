@@ -82,15 +82,13 @@ pipeline {
                     set -eu
                     mkdir -p .scannerwork
                     docker run --rm \
-                        -e SONAR_HOST_URL="$SONAR_HOST_URL" \
+                        -e SONAR_HOST_URL="http://host.docker.internal:9000" \
                         -e SONAR_TOKEN="$SONAR_AUTH_TOKEN" \
                         -v "$WORKSPACE:/usr/src" \
                         -w /usr/src \
                         sonarsource/sonar-scanner-cli:latest \
                         -Dsonar.userHome=/usr/src \
                         -Dsonar.working.directory=.scannerwork
-                    
-                    ls -la .scannerwork || true
                     '''
                 }
             }
