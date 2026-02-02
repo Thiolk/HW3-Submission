@@ -73,13 +73,6 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            def scannerHome = tool 'SonarScanner';
-            withSonarQubeEnv() {
-                sh "${scannerHome}/bin/sonar-scanner"
-            }
-        }
-
         stage('Build and Package Artifact') {
             agent { label 'docker' }
             steps {
