@@ -74,14 +74,18 @@ pipeline {
         }
 
         stage('SonarQube Scan') {
-            when { branch 'main' }
             agent { label 'docker' }
             steps {
                 unstash 'workspace'
                 withSonarQubeEnv('sonarqube-local') {
                     sh '''
                     set -eux
-                    sonar-scanner
+                    docker run --rm \
+                        -e SONAR_HOST_URL="$SONAR_HOST_URL" \
+                        -e SONAR_TOKEN="$SONAR_AUTH_TOKEN" \
+                        -v "$PWD:/usr/src" \
+                        -w /usr/src \
+                        sonarsource/sonar-scanner-cli:latest
                     '''
                 }
             }
