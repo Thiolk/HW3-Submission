@@ -93,7 +93,7 @@ pipeline {
 
         stage('Quality Gate') {
             when { branch 'main' }
-            agent none
+            agent { label 'docker' }
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
