@@ -73,6 +73,31 @@ pipeline {
             }
         }
 
+        stage('SonarQube Scan') {
+            when { branch 'main' }
+            agent { label 'docker' }
+            steps {
+                unstash 'workspace'
+                withSonarQubeEnv('sonarqube') {
+                    sh '''
+                    set -eux
+                    # if you use sonar-scanner CLI installed on agent:
+                    sonar-scanner
+                    '''
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            when { branch 'main' }
+            agent none
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Build and Package Artifact') {
             agent { label 'docker' }
             steps {
