@@ -165,6 +165,22 @@ pipeline {
             stash name: 'e2e-junit', includes: 'e2e/test-results/**', allowEmpty: true
             }
         }
+
+        stage('Performance Test (k6)') {
+            when { branch 'main' }
+            agent { label 'docker' }
+            steps {
+                unstash 'staging'
+                sh '''
+                    set -eux
+                    mkdir -p perf_reports
+
+                    docker compose --env-file .env.staging --profile staging down -v --remove-orphans || true
+                    docker compose --env-file .env.staging --profile staging up -d --build staging-db staging-web
+                    docker compose --env-file .env.staging --profile staging run --rm perf
+                '''
+                }
+            }
     }
 
     post {
@@ -175,6 +191,7 @@ pipeline {
                 unstash 'e2e-junit'
                 junit testResults: 'e2e/test-results/results.xml', allowEmptyResults: true
                 archiveArtifacts artifacts: 'e2e/test-results/**', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'perf_reports/**', allowEmptyArchive: true
 
                 sh '''
                 set +e

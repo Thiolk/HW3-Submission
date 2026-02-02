@@ -199,6 +199,27 @@ services:
     volumes:
       - sonar_db:/var/lib/postgresql/data
 
+  perf:
+    image: grafana/k6:0.50.0
+    profiles: ["staging"]
+    working_dir: /work
+    depends_on:
+      staging-web:
+        condition: service_healthy
+      staging-db:
+        condition: service_healthy
+    environment:
+      BASE_URL: "http://staging-web:5000"
+    volumes:
+      - ./perf:/work/perf:ro
+      - ./perf_reports:/work/perf_reports
+    networks:
+      - frontend
+      - backend
+    command: >
+      run /work/perf/k6.todo.js
+      --summary-export=/work/perf_reports/summary.json
+
 networks:
   frontend:
     driver: bridge
