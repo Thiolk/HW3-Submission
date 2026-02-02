@@ -41,7 +41,7 @@ services:
       - ./db/staging-seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
 
     healthcheck:
-      test: ["CMD-SHELL", "mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e 'SELECT 1' ${MYSQL_DATABASE} >/dev/null 2>&1"]
+      test: ["CMD-SHELL", "mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e 'SELECT 1' ${MYSQL_DATABASE}_staging >/dev/null 2>&1"]
       interval: 10s
       timeout: 5s
       retries: 3
