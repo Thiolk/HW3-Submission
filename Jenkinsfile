@@ -90,6 +90,7 @@ pipeline {
                 }
             }
         }
+
         stage('Prepare Staging Env') {
             agent any
             steps {
@@ -125,13 +126,7 @@ pipeline {
             unstash 'staging'
             sh '''
                 set -eux
-                docker compose --env-file .env.staging --profile staging up -d --build web
-                docker compose --env-file .env.staging --profile staging exec -T web sh -lc 'python - << "PY"
-                import os
-                print("WEB DB_HOST=", os.getenv("DB_HOST"))
-                print("WEB DB_NAME=", os.getenv("DB_NAME"))
-                print("WEB DB_USER=", os.getenv("DB_USER"))
-                PY'
+                docker compose --env-file .env.staging --profile staging up -d --build staging-db staging-web
                 docker compose --env-file .env.staging --profile staging run --rm e2e
             '''
             }

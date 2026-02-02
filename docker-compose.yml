@@ -129,14 +129,15 @@ services:
   e2e:
     image: mcr.microsoft.com/playwright:v1.49.0-jammy
     working_dir: /e2e
+    profiles: ["staging"]
     depends_on:
-      web:
+      staging-web:
         condition: service_healthy
       staging-db:
         condition: service_healthy
     environment:
       CI: "true"
-      BASE_URL: "http://web:5000"
+      BASE_URL: "http://staging-web:5000"
     env_file:
       - ./.env.staging
     volumes:
@@ -147,6 +148,27 @@ services:
     command: >
       sh -lc "npm install --no-fund --no-audit
       && npm run test:ci"
+
+  staging-web:
+    build: ./app
+    container_name: todo-app-staging
+    profiles: ["staging"]
+    expose:
+      - "5000"
+    env_file:
+      - ./.env.staging
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      staging-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
 networks:
   frontend:
