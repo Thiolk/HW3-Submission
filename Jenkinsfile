@@ -80,16 +80,17 @@ pipeline {
                 withSonarQubeEnv('sonarqube-local') {
                     sh '''
                     set -eu
+                    mkdir -p .scannerwork
                     docker run --rm \
                         -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                         -e SONAR_TOKEN="$SONAR_AUTH_TOKEN" \
-                        -v "$PWD:/usr/src" \
+                        -v "$WORKSPACE:/usr/src" \
                         -w /usr/src \
-                        sonarsource/sonar-scanner-cli:latest
+                        sonarsource/sonar-scanner-cli:latest \
+                        -Dsonar.userHome=/usr/src \
+                        -Dsonar.working.directory=.scannerwork
                     
-                    pwd
                     ls -la .scannerwork || true
-                    ls -la .scannerwork/report-task.txt || true
                     '''
                 }
             }
