@@ -170,7 +170,7 @@ pipeline {
             node('docker') {
                 archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: true
-                archiveArtifacts artifacts: 'e2e/playwright-report/**', allowEmptyArchive: true
+                junit 'e2e/test-results/results.xml'
                 archiveArtifacts artifacts: 'e2e/test-results/**', allowEmptyArchive: true
 
                 sh '''

@@ -4,7 +4,7 @@
   "description": "Prequisites Git Docker Desktop Jenkins (running locally) ngrok",
   "main": "index.js",
   "scripts": {
-    "test:ci": "playwright test --reporter=line,html"
+    "test:ci": "PLAYWRIGHT_JUNIT_OUTPUT_NAME=results.xml playwright test --reporter=line,junit --output=test-results"
   },
   "repository": {
     "type": "git",
