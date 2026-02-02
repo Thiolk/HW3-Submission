@@ -81,11 +81,15 @@ pipeline {
                     sh '''
                     set -eu
                     docker run --rm \
+                        --user "$(id -u):$(id -g)" \
                         -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                         -e SONAR_TOKEN="$SONAR_AUTH_TOKEN" \
                         -v "$WORKSPACE:/usr/src" \
                         -w /usr/src \
                         sonarsource/sonar-scanner-cli:latest
+
+                    ls -la .scannerwork || true
+                    ls -la .scannerwork/report-task.txt || true
                     '''
                 }
             }
