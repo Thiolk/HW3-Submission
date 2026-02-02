@@ -132,7 +132,7 @@ services:
     depends_on:
       web:
         condition: service_healthy
-      db:
+      staging-db:
         condition: service_healthy
     environment:
       CI: "true"
