@@ -160,7 +160,9 @@ pipeline {
                 set -eux
                 docker compose --env-file .env.staging --profile staging up -d --build staging-db staging-web
                 docker compose --env-file .env.staging --profile staging run --rm e2e
+            ls -la e2e/test-results || true
             '''
+            stash name: 'e2e-junit', includes: 'e2e/test-results/**', allowEmpty: true
             }
         }
     }
@@ -170,7 +172,8 @@ pipeline {
             node('docker') {
                 archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: true
-                junit 'e2e/test-results/results.xml'
+                unstash 'e2e-junit'
+                junit 'e2e/test-results/results.xml', allowEmptyResults: true
                 archiveArtifacts artifacts: 'e2e/test-results/**', allowEmptyArchive: true
 
                 sh '''
