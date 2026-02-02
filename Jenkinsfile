@@ -83,7 +83,7 @@ pipeline {
                     docker run --rm \
                         -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                         -e SONAR_TOKEN="$SONAR_AUTH_TOKEN" \
-                        -v "$PWD:/usr/src" \
+                        -v "$WORKSPACE:/usr/src" \
                         -w /usr/src \
                         sonarsource/sonar-scanner-cli:latest
                     '''
@@ -92,7 +92,6 @@ pipeline {
         }
 
         stage('Quality Gate') {
-            when { branch 'main' }
             agent { label 'docker' }
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
