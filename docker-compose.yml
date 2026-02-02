@@ -108,7 +108,7 @@ services:
   test:
     build: ./app
     container_name: todo-test
-    working_dir: /usr/src
+    working_dir: /app
     networks: 
       - backend
     env_file:
@@ -121,7 +121,7 @@ services:
       - ./coverage_reports:/coverage_reports
     command: >
       sh -lc "pytest -q
-      --cov=app
+      --cov=/app
       --cov-report=term-missing
       --cov-report=html:/coverage_reports/html
       --cov-report=xml:/coverage_reports/coverage.xml
