@@ -79,7 +79,7 @@ pipeline {
                 unstash 'workspace'
                 withSonarQubeEnv('sonarqube-local') {
                     sh '''
-                    set -eux
+                    set -eu
                     docker run --rm \
                         -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                         -e SONAR_TOKEN="$SONAR_AUTH_TOKEN" \
