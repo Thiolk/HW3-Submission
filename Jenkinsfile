@@ -173,7 +173,7 @@ pipeline {
                 archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: true
                 unstash 'e2e-junit'
-                junit 'e2e/test-results/results.xml', allowEmptyResults: true
+                junit testResults: 'e2e/test-results/results.xml', allowEmptyResults: true
                 archiveArtifacts artifacts: 'e2e/test-results/**', allowEmptyArchive: true
 
                 sh '''
