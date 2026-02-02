@@ -125,7 +125,8 @@ pipeline {
             unstash 'staging'
             sh '''
                 set -eux
-                docker compose run --rm e2e
+                docker compose --env-file .env.staging --profile staging up -d --build web
+                docker compose --env-file .env.staging --profile staging run --rm e2e
             '''
             }
         }
