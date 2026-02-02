@@ -83,7 +83,7 @@ pipeline {
                     docker run --rm \
                         -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                         -e SONAR_TOKEN="$SONAR_AUTH_TOKEN" \
-                        -v "$WORKSPACE:/usr/src" \
+                        -v "$PWD:/usr/src" \
                         -w /usr/src \
                         sonarsource/sonar-scanner-cli:latest
                     
@@ -169,10 +169,10 @@ pipeline {
     post {
         always {
             node('docker') {
-                archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
+                /*archiveArtifacts artifacts: 'coverage_reports/html/**', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'artifacts/**', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'e2e/playwright-report/**', allowEmptyArchive: true
-                archiveArtifacts artifacts: 'e2e/test-results/**', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'e2e/test-results/**', allowEmptyArchive: true*/
 
                 sh '''
                 set +e
