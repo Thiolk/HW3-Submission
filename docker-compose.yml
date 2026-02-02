@@ -146,7 +146,7 @@ services:
       - frontend
       - backend
     command: >
-      sh -lc "npm ci --no-fund --no-audit
+      sh -lc "npm install --no-fund --no-audit
       && npx playwright test --reporter=line,html"
 
   staging-web:
