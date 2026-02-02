@@ -116,6 +116,7 @@ pipeline {
                     SHOW TABLES;
                     SELECT COUNT(*) AS task_count FROM task;
                     SELECT * FROM task;"'
+                    docker compose --env-file .env.staging --profile staging down -v 
                 '''
             }
         }
