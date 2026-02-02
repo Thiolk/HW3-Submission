@@ -73,6 +73,13 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            def scannerHome = tool 'SonarScanner';
+            withSonarQubeEnv() {
+                sh "${scannerHome}/bin/sonar-scanner"
+            }
+        }
+
         stage('Build and Package Artifact') {
             agent { label 'docker' }
             steps {
@@ -126,6 +133,12 @@ pipeline {
             sh '''
                 set -eux
                 docker compose --env-file .env.staging --profile staging up -d --build web
+                docker compose --env-file .env.staging --profile staging exec -T web sh -lc 'python - << "PY"
+                import os
+                print("WEB DB_HOST=", os.getenv("DB_HOST"))
+                print("WEB DB_NAME=", os.getenv("DB_NAME"))
+                print("WEB DB_USER=", os.getenv("DB_USER"))
+                PY'
                 docker compose --env-file .env.staging --profile staging run --rm e2e
             '''
             }
