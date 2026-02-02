@@ -128,7 +128,7 @@ services:
       --cov-fail-under=80"
 
   e2e:
-    image: mcr.microsoft.com/playwright:v1.49.0-jammy
+    image: mcr.microsoft.com/playwright:v1.58.1-jammy
     working_dir: /e2e
     profiles: ["staging"]
     depends_on:
@@ -147,8 +147,8 @@ services:
       - frontend
       - backend
     command: >
-      sh -lc "npm install --no-fund --no-audit
-      && npx playwright test --reporter=line,html"
+      sh -lc "npm ci --no-fund --no-audit
+      && npm run test:ci"
 
   staging-web:
     build: ./app

@@ -78,10 +78,9 @@ pipeline {
             agent { label 'docker' }
             steps {
                 unstash 'workspace'
-                withSonarQubeEnv('sonarqube') {
+                withSonarQubeEnv('sonarqube-local') {
                     sh '''
                     set -eux
-                    # if you use sonar-scanner CLI installed on agent:
                     sonar-scanner
                     '''
                 }

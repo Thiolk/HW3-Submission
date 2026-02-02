@@ -4,7 +4,8 @@
   "description": "Prequisites Git Docker Desktop Jenkins (running locally) ngrok",
   "main": "index.js",
   "scripts": {
-    "test:ci": "playwright test --reporter=html"},
+    "test:ci": "playwright test --reporter=line,html --reporter-options open=never,outputFolder=playwright-report"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Thiolk/HW3-Submission.git"
